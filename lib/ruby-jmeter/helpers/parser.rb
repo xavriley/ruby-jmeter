@@ -94,8 +94,15 @@ module RubyJmeter
             files.each do |f|
               b.elementProp(name: f[:path], elementType: "HTTPFileArg") {
                 b.stringProp f[:path] || '' , name: "File.path"
-                b.stringProp f[:paramname] || '' , name: "File.paramname"
                 b.stringProp f[:mimetype] || '' , name: "File.mimetype"
+                if not f[:paramname].nil?
+                  # Not providing a paramname has a special behaviour in jMeter
+                  # it effectively switches the file submission to be the
+                  # raw body of a POST or PUT request
+                  # See http://jmeter.apache.org/usermanual/component_reference.html#HTTP_Request
+                  # under "File Path:"
+                  b.stringProp f[:paramname], name: "File.paramname"
+                end
               }
             end
           }
